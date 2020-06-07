@@ -141,6 +141,17 @@ void loop() {
 
   oled.display();
 
+#elif defined(DISPLAY_MODE) && DISPLAY_MODE == 2
+
+  lcd.setCursor(0,0);
+  lcd.print("ENC: ");
+  lcd.print(enc_position);
+  lcd.print("           ");
+
+  lcd.setCursor(0,1);
+  lcd.print("BTN: ");
+  lcd.print(display_str);
+  lcd.print("           ");
 #endif
 
 //  delay(100); // Add delay to demonstrate the advantage of using interrupt
