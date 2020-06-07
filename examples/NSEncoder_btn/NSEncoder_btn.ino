@@ -5,11 +5,16 @@
 // This Example shows position of the encoder and response to button pressing event.
 
 //Program Parameter
-#define WITH_OLED //Enable SSD1306 OLED Support
+// #define DISPLAY_MODE 0 //No external display
+// #define DISPLAY_MODE 1 //Enable SSD1306 OLED Support
+// #define DISPLAY_MODE 2 //Enable HD44780 LCD Support
+
+
 
 #define ENCODER_S1_PIN 2 //Define you encoder connection pin Here
-#define ENCODER_S2_PIN 9
+#define ENCODER_S2_PIN 3
 #define ENCODER_KEY_PIN 10
+
 
 
 // Program Start
@@ -17,17 +22,23 @@
 #include <MsTimer2.h>
 #include <NSEncoder.h>
 
-#ifdef WITH_OLED
+//Display support
+#if defined(DISPLAY_MODE) && DISPLAY_MODE == 1
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#elif defined(DISPLAY_MODE) && DISPLAY_MODE == 2
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
 #endif
 
 
 NSEncoder_btn enc(ENCODER_S1_PIN, ENCODER_S2_PIN, ENCODER_KEY_PIN, 4, true);
 
-#ifdef WITH_OLED
+#if defined(DISPLAY_MODE) && DISPLAY_MODE == 1
 Adafruit_SSD1306 oled(128, 64, &Wire, -1);//OLED 128x64 No Reset Pin
+#elif defined(DISPLAY_MODE) && DISPLAY_MODE == 2
+LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 #endif
 
 String display_str = "Open";
@@ -41,13 +52,16 @@ void isr_mstimer2()
 void setup() {
   Serial.begin(115200);
 
-#ifdef WITH_OLED
+#if defined(DISPLAY_MODE) && DISPLAY_MODE == 1
   // OLED config
   if(!oled.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
   for(;;); // Don't proceed, loop forever
   }
   oled.clearDisplay();
   oled.display();
+#elif defined(DISPLAY_MODE) && DISPLAY_MODE == 2
+  lcd.init();
+  lcd.backlight();
 #endif
 
 
@@ -85,15 +99,15 @@ void loop() {
     break;
     
     case NSEncoder_btn::PRESSED:
-      display_str = "Clicked";
+      display_str = "Pressed";
     break;
 
     case NSEncoder_btn::RELEASED:
-      display_str = "released";
+      display_str = "Released";
     break;
     
     case NSEncoder_btn::HELD:
-      display_str = "held";
+      display_str = "Held";
     break;
     
     case NSEncoder_btn::DOUBLE_PRESSED:
@@ -108,7 +122,7 @@ void loop() {
     Serial.println(display_str);
   }
   
-#ifdef WITH_OLED
+#if defined(DISPLAY_MODE) && DISPLAY_MODE == 1
 
   oled.clearDisplay();
    
