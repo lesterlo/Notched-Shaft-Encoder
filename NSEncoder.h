@@ -26,7 +26,7 @@ public:
     );
     //Destructor
     ~NSEncoder();
-    bool get_Position(int &);
+    bool get_Position(int16_t &);
     int16_t get_diffPosition();
     void reset();
 private:
